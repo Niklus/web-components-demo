@@ -7,14 +7,16 @@ class AppRoot extends LitElement {
       myProp: { type: String },
       count: { type: Number },
       todos: { type: Array },
+      player: { type: Object },
+      video_id: { type: String },
     };
   }
 
   constructor() {
     super();
-    this.myProp = 'Hello Web Components!';
+    this.myProp = 'Hello Web Components';
     this.count = 0;
-    this.todos = ['code', 'eat', 'train', 'repeat'];
+    this.todos = ['code', 'train', 'sleep', 'repeat'];
   }
 
   increment() {
@@ -25,25 +27,61 @@ class AppRoot extends LitElement {
     this.count--;
   }
 
-  // https://lit-element.polymer-project.org/guide/templates
+  play() {
+    this.player.playVideo();
+  }
+
+  pause() {
+    this.player.pauseVideo();
+  }
+
+  stop() {
+    this.player.stopVideo();
+  }
+
+  playerReady(evt) {
+    this.player = evt.target;
+  }
+
+  handleFormSubmit(e) {
+    e.preventDefault();
+    if (this.video_id) {
+      this.player.loadVideoById(this.video_id);
+    }
+  }
+
   render() {
     return html`
       <div>
-        <p>${this.myProp}</p>
-        <p>count: ${this.count}</p>
-        <button @click=${this.increment}>increment +</button> |
+        <h1>${this.myProp}</h1>
+        <h2>count: ${this.count}</h2>
+        <button @click=${this.increment}>increment +</button>
         <button @click=${this.decrement}>decrement -</button>
-        <p>Todos</p>
+        <h3>Todos</h3>
         <ul>
           ${this.todos.map((el) => html`<li>${el}</li>`)}
         </ul>
+        <!--YouTube Web Component-->
         <you-tube
           height="390"
           width="640"
           video_id="YBwgkr_Sbx0"
           controls="0"
           autoplay="0"
-        ></you-tube>
+          .onPlayerReady=${(e) => this.playerReady(e)}
+        ></you-tube
+        ><br />
+        <button @click=${this.play}>Play</button>
+        <button @click=${this.pause}>Pause</button>
+        <button @click=${this.stop}>Stop</button>
+        <form @submit=${(e) => this.handleFormSubmit(e)}>
+          <input
+            @change=${(e) => (this.video_id = e.target.value)}
+            placeholder="Youtube Video ID"
+            type="text"
+          />
+          <button>Load</button>
+        </form>
       </div>
     `;
   }

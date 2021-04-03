@@ -1,0 +1,4 @@
+/* Since we are not using shadow dom we need a separate css file*/
+#player {
+  max-width: 100%;
+}
